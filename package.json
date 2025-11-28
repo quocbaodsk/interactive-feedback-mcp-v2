@@ -1,0 +1,51 @@
+{
+  "name": "interactive-feedback-mcp-secure",
+  "version": "2.0.0",
+  "description": "Secure and optimized Interactive Feedback MCP Server with enhanced security and local file storage",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "node --inspect src/main.js",
+    "test": "node test-integration.js",
+    "clean": "node -e \"require('fs-extra').emptyDirSync('./storage/temp')\"",
+    "migrate": "node migrate.js",
+    "migrate-check": "node migrate.js check"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "interactive",
+    "feedback",
+    "secure",
+    "nodejs",
+    "web-ui",
+    "express",
+    "websocket",
+    "cursor",
+    "claude"
+  ],
+  "author": {
+    "name": "STMMO Project - Secure Remake",
+    "email": "nguyenhop530@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "ws": "^8.14.2",
+    "fs-extra": "^11.1.1",
+    "joi": "^17.11.0",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.20.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

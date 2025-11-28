@@ -1,0 +1,7 @@
+{
+  "allowedCommands": ["ls", "pwd", "cat", "echo", "node", "npm", "yarn", "git"],
+  "maxCommandLength": 500,
+  "allowShellCommands": true,
+  "restrictedPaths": [],
+  "allowedFileExtensions": [".js", ".json", ".md", ".txt", ".yml", ".yaml"]
+}

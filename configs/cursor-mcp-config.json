@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "interactive-feedback-mcp": {
+      "command": "node",
+      "args": ["src/mcp-lightweight.js"],
+      "env": {
+        "NODE_ENV": "production",
+        "NODE_OPTIONS": "--no-warnings --no-deprecation",
+        "MCP_LOG_LEVEL": "error"
+      },
+      "timeout": 60000,
+      "cwd": "/Users/quocbao/Documents/Workspaces/NodeJS/interactive-feedback-mcp-v2"
+    }
+  }
+}

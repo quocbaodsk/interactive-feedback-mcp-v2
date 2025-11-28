@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug UI Connection</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Monaco', 'Courier New', monospace;
+        background: #0d1117;
+        color: #c9d1d9;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #58a6ff;
+        margin-bottom: 10px;
+      }
+
+      .description {
+        color: #8b949e;
+        margin-bottom: 30px;
+      }
+
+      .section {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        color: #58a6ff;
+        font-size: 18px;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .test-group {
+        margin-bottom: 20px;
+      }
+
+      .test-name {
+        color: #f0f6fc;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      button {
+        background: #238636;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      button:hover {
+        background: #2ea043;
+      }
+
+      button:active {
+        background: #1a7f37;
+      }
+
+      .output {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 10px;
+        font-size: 13px;
+        max-height: 400px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .status.pending {
+        background: #6e7681;
+        color: white;
+      }
+
+      .status.running {
+        background: #1f6feb;
+        color: white;
+      }
+
+      .status.success {
+        background: #238636;
+        color: white;
+      }
+
+      .status.error {
+        background: #da3633;
+        color: white;
+      }
+
+      .input-group {
+        margin: 15px 0;
+      }
+
+      label {
+        display: block;
+        color: #c9d1d9;
+        margin-bottom: 5px;
+      }
+
+      input[type='text'],
+      input[type='number'] {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 14px;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .metric {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 15px;
+      }
+
+      .metric-label {
+        color: #8b949e;
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .metric-value {
+        color: #58a6ff;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      code {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: #79c0ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔍 Debug UI Connection</h1>
+      <p class="description">Tool để kiểm tra kết nối và dữ liệu giữa Frontend ↔ Backend</p>
+
+      <!-- Port Configuration -->
+      <div class="section">
+        <div class="section-title">⚙️ Cấu Hình</div>
+        <div class="input-group">
+          <label for="port-input">Backend Port (mặc định: 3800-3900)</label>
+          <input type="number" id="port-input" value="3800" placeholder="3800" />
+          <button onclick="updatePort()">Cập Nhật Port</button>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Backend URL</div>
+            <div class="metric-value" id="backend-url" style="font-size: 14px">http://127.0.0.1:3800</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test 1: API Config -->
+      <div class="section">
+        <div class="section-title">Test 1: GET /api/config <span class="status pending" id="status-config">Chưa Chạy</span></div>
+        <div class="test-group">
+          <div class="test-name">Kiểm tra API trả về config với prompt/summary</div>
+          <button onclick="testGetConfig()">▶ Chạy Test</button>
+          <div class="output" id="output-config">Nhấn "Chạy Test" để bắt đầu...</div>
+        </div>
+      </div>
+
+      <!-- Test 2: WebSocket -->
+      <div class="section">
+        <div class="section-title">Test 2: WebSocket Connection <span class="status pending" id="status-ws">Chưa Chạy</span></div>
+        <div class="test-group">
+          <div class="test-name">Kiểm tra WebSocket kết nối và nhận messages</div>
+          <button onclick="testWebSocket()">▶ Chạy Test</button>
+          <button onclick="closeWebSocket()">🛑 Đóng WebSocket</button>
+          <div class="output" id="output-ws">Nhấn "Chạy Test" để bắt đầu...</div>
+        </div>
+      </div>
+
+      <!-- Test 3: File Browser -->
+      <div class="section">
+        <div class="section-title">Test 3: GET /api/browse-files <span class="status pending" id="status-files">Chưa Chạy</span></div>
+        <div class="test-group">
+          <div class="test-name">Kiểm tra API list files</div>
+          <button onclick="testBrowseFiles('')">▶ List Root</button>
+          <button onclick="testBrowseFiles('src')">▶ List src/</button>
+          <button onclick="testBrowseFiles('public')">▶ List public/</button>
+          <div class="output" id="output-files">Nhấn "Chạy Test" để bắt đầu...</div>
+        </div>
+      </div>
+
+      <!-- Test 4: Markdown Rendering -->
+      <div class="section">
+        <div class="section-title">Test 4: Markdown Rendering <span class="status pending" id="status-md">Chưa Chạy</span></div>
+        <div class="test-group">
+          <div class="test-name">Kiểm tra Markdown được render đúng</div>
+          <button onclick="testMarkdownRender()">▶ Chạy Test</button>
+          <div class="output" id="output-md">Nhấn "Chạy Test" để bắt đầu...</div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="section">
+        <div class="section-title">📊 Tổng Kết</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Tests Passed</div>
+            <div class="metric-value" id="tests-passed">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Tests Failed</div>
+            <div class="metric-value" id="tests-failed" style="color: #f85149">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Total Tests</div>
+            <div class="metric-value" id="tests-total">4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let backendUrl = 'http://127.0.0.1:3800'
+      let ws = null
+      let testsPassed = 0
+      let testsFailed = 0
+
+      function updatePort() {
+        const port = document.getElementById('port-input').value
+        backendUrl = `http://127.0.0.1:${port}`
+        document.getElementById('backend-url').textContent = backendUrl
+        log('config', `Backend URL updated to: ${backendUrl}`)
+      }
+
+      function updateStatus(testId, status) {
+        const statusEl = document.getElementById(`status-${testId}`)
+        statusEl.className = `status ${status}`
+        statusEl.textContent = {
+          pending: 'Chưa Chạy',
+          running: 'Đang Chạy...',
+          success: '✓ Thành Công',
+          error: '✗ Thất Bại',
+        }[status]
+      }
+
+      function log(testId, message, isError = false) {
+        const outputEl = document.getElementById(`output-${testId}`)
+        const timestamp = new Date().toLocaleTimeString()
+        const prefix = isError ? '❌' : '✅'
+        outputEl.textContent += `[${timestamp}] ${prefix} ${message}\n`
+        outputEl.scrollTop = outputEl.scrollHeight
+      }
+
+      function clearLog(testId) {
+        document.getElementById(`output-${testId}`).textContent = ''
+      }
+
+      function updateMetrics(passed, failed) {
+        if (passed !== undefined) {
+          testsPassed = passed
+          document.getElementById('tests-passed').textContent = testsPassed
+        }
+        if (failed !== undefined) {
+          testsFailed = failed
+          document.getElementById('tests-failed').textContent = testsFailed
+        }
+      }
+
+      // Test 1: GET /api/config
+      async function testGetConfig() {
+        clearLog('config')
+        updateStatus('config', 'running')
+        log('config', 'Fetching config from backend...')
+
+        try {
+          const response = await fetch(`${backendUrl}/api/config`)
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          }
+
+          const data = await response.json()
+
+          log('config', `Response Status: ${response.status} OK`)
+          log('config', `Response Data:\n${JSON.stringify(data, null, 2)}`)
+
+          // Validate data
+          const checks = [
+            { field: 'projectDirectory', value: data.projectDirectory, type: 'string' },
+            { field: 'prompt', value: data.prompt, type: 'string' },
+            { field: 'config', value: data.config, type: 'object' },
+          ]
+
+          let allPassed = true
+          for (const check of checks) {
+            if (typeof check.value === check.type) {
+              log('config', `✓ ${check.field}: ${check.type} (${check.type === 'string' ? check.value.substring(0, 50) + '...' : 'object'})`)
+            } else {
+              log('config', `✗ ${check.field}: Expected ${check.type}, got ${typeof check.value}`, true)
+              allPassed = false
+            }
+          }
+
+          if (allPassed) {
+            updateStatus('config', 'success')
+            updateMetrics(testsPassed + 1, undefined)
+          } else {
+            updateStatus('config', 'error')
+            updateMetrics(undefined, testsFailed + 1)
+          }
+        } catch (error) {
+          log('config', `Error: ${error.message}`, true)
+          updateStatus('config', 'error')
+          updateMetrics(undefined, testsFailed + 1)
+        }
+      }
+
+      // Test 2: WebSocket
+      async function testWebSocket() {
+        clearLog('ws')
+        updateStatus('ws', 'running')
+        log('ws', 'Connecting to WebSocket...')
+
+        try {
+          const wsUrl = backendUrl.replace('http', 'ws')
+          ws = new WebSocket(wsUrl)
+
+          ws.onopen = () => {
+            log('ws', `Connected to ${wsUrl}`)
+            log('ws', 'Waiting for messages...')
+          }
+
+          ws.onmessage = event => {
+            const message = JSON.parse(event.data)
+            log('ws', `Message received:\n${JSON.stringify(message, null, 2)}`)
+
+            if (message.type === 'session_info') {
+              log('ws', '✓ Received session_info message')
+              updateStatus('ws', 'success')
+              updateMetrics(testsPassed + 1, undefined)
+            }
+          }
+
+          ws.onerror = error => {
+            log('ws', `WebSocket error: ${error}`, true)
+            updateStatus('ws', 'error')
+            updateMetrics(undefined, testsFailed + 1)
+          }
+
+          ws.onclose = () => {
+            log('ws', 'WebSocket closed')
+          }
+        } catch (error) {
+          log('ws', `Error: ${error.message}`, true)
+          updateStatus('ws', 'error')
+          updateMetrics(undefined, testsFailed + 1)
+        }
+      }
+
+      function closeWebSocket() {
+        if (ws) {
+          ws.close()
+          log('ws', 'WebSocket closed manually')
+        }
+      }
+
+      // Test 3: Browse Files
+      async function testBrowseFiles(path) {
+        clearLog('files')
+        updateStatus('files', 'running')
+        log('files', `Fetching files for path: "${path}"`)
+
+        try {
+          const url = `${backendUrl}/api/browse-files?path=${encodeURIComponent(path)}`
+          const response = await fetch(url)
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          }
+
+          const data = await response.json()
+
+          log('files', `Response Status: ${response.status} OK`)
+          log('files', `Current Path: ${data.currentPath}`)
+          log('files', `Total Items: ${data.items.length}`)
+
+          if (data.items.length > 0) {
+            log('files', `\nFirst 10 items:`)
+            data.items.slice(0, 10).forEach(item => {
+              const icon = item.type === 'directory' ? '📁' : '📄'
+              log('files', `  ${icon} ${item.name}`)
+            })
+
+            updateStatus('files', 'success')
+            updateMetrics(testsPassed + 1, undefined)
+          } else {
+            log('files', 'No items found (this might be normal for empty directories)')
+            updateStatus('files', 'success')
+            updateMetrics(testsPassed + 1, undefined)
+          }
+        } catch (error) {
+          log('files', `Error: ${error.message}`, true)
+          updateStatus('files', 'error')
+          updateMetrics(undefined, testsFailed + 1)
+        }
+      }
+
+      // Test 4: Markdown Rendering
+      function testMarkdownRender() {
+        clearLog('md')
+        updateStatus('md', 'running')
+        log('md', 'Testing markdown rendering...')
+
+        try {
+          // Check if required libraries are loaded
+          if (typeof showdown === 'undefined') {
+            log('md', 'Loading Showdown.js...', true)
+            const script = document.createElement('script')
+            script.src = 'https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js'
+            document.head.appendChild(script)
+
+            script.onload = () => {
+              log('md', 'Showdown.js loaded')
+              testMarkdownActual()
+            }
+          } else {
+            testMarkdownActual()
+          }
+        } catch (error) {
+          log('md', `Error: ${error.message}`, true)
+          updateStatus('md', 'error')
+          updateMetrics(undefined, testsFailed + 1)
+        }
+      }
+
+      function testMarkdownActual() {
+        const testMarkdown = `# Test Heading
+
+This is **bold** text and this is *italic* text.
+
+## Code Block:
+\`\`\`javascript
+console.log("Hello World");
+\`\`\`
+
+- Item 1
+- Item 2
+`
+
+        log('md', 'Test markdown:\n' + testMarkdown)
+
+        try {
+          const converter = new showdown.Converter()
+          const html = converter.makeHtml(testMarkdown)
+
+          log('md', '\nRendered HTML:\n' + html.substring(0, 200) + '...')
+
+          // Check if HTML contains expected elements
+          if (html.includes('<h1>') && html.includes('<strong>') && html.includes('<code>')) {
+            log('md', '✓ Markdown rendered correctly')
+            updateStatus('md', 'success')
+            updateMetrics(testsPassed + 1, undefined)
+          } else {
+            log('md', '✗ Markdown rendering incomplete', true)
+            updateStatus('md', 'error')
+            updateMetrics(undefined, testsFailed + 1)
+          }
+        } catch (error) {
+          log('md', `Error: ${error.message}`, true)
+          updateStatus('md', 'error')
+          updateMetrics(undefined, testsFailed + 1)
+        }
+      }
+
+      // Auto-detect port on page load
+      window.addEventListener('load', () => {
+        log('config', 'Debug tool loaded. Configure port and run tests.')
+      })
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,6 @@
+# Storage directory for all generated files
+# This directory contains:
+# - configs/ - Project configuration files
+# - temp/ - Temporary files (auto-cleaned)
+# - logs/ - Application and audit logs
+# - sessions/ - Session data and state

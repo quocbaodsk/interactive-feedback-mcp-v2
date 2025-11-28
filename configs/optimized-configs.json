@@ -1,0 +1,108 @@
+{
+  "description": "Optimized MCP Server Configurations - Fixes Timeout Issues",
+  "version": "2.0.0",
+  "configs": {
+    "vscode_optimized": {
+      "description": "VSCode configuration with timeout fixes",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server"
+            ],
+            "env": {
+              "NODE_ENV": "production",
+              "NODE_OPTIONS": "--no-deprecation"
+            },
+            "timeout": 60000,
+            "cwd": "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2"
+          }
+        }
+      }
+    },
+    "cursor_optimized": {
+      "description": "Cursor configuration with improved initialization",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback-mcp": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server"
+            ],
+            "env": {
+              "NODE_ENV": "production",
+              "NODE_OPTIONS": "--no-deprecation",
+              "MCP_LOG_LEVEL": "error"
+            },
+            "timeout": 45000,
+            "cwd": "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2"
+          }
+        }
+      }
+    },
+    "windsurf_optimized": {
+      "description": "Windsurf configuration optimized for stability",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server"
+            ],
+            "env": {
+              "NODE_ENV": "production",
+              "NODE_OPTIONS": "--no-deprecation"
+            },
+            "timeout": 50000,
+            "cwd": "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2"
+          }
+        }
+      }
+    },
+    "debug_config": {
+      "description": "Debug configuration for troubleshooting",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback-debug": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server"
+            ],
+            "env": {
+              "NODE_ENV": "development",
+              "MCP_LOG_LEVEL": "debug",
+              "DEBUG": "*"
+            },
+            "timeout": 90000,
+            "cwd": "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2"
+          }
+        }
+      }
+    }
+  },
+  "troubleshooting": {
+    "timeout_fixes": [
+      "Add explicit timeout values (45-60 seconds)",
+      "Set NODE_OPTIONS to --no-deprecation",
+      "Use absolute paths for command and cwd",
+      "Set production environment variables",
+      "Ensure Node.js version compatibility"
+    ],
+    "common_issues": [
+      "Wrong file paths",
+      "Missing dependencies", 
+      "Node.js version incompatibility",
+      "Permission issues",
+      "Network restrictions"
+    ]
+  }
+}

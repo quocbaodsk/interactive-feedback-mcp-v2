@@ -1,0 +1,87 @@
+{
+  "description": "Interactive Feedback MCP Server Configuration Templates",
+  "version": "2.0.0",
+  "configs": {
+    "vscode": {
+      "file_location": "VSCode Settings → settings.json",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server"
+            ],
+            "env": {
+              "NODE_ENV": "production"
+            }
+          }
+        }
+      }
+    },
+    "cursor": {
+      "file_location": "Cursor → MCP Settings",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback-mcp": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server",
+              "--project-directory",
+              "{{workspaceFolder}}"
+            ],
+            "env": {
+              "NODE_ENV": "production",
+              "MCP_LOG_LEVEL": "info"
+            }
+          }
+        }
+      }
+    },
+    "windsurf": {
+      "file_location": "Windsurf → Settings → Extensions → MCP",
+      "config": {
+        "mcpServers": {
+          "interactive-feedback": {
+            "command": "node",
+            "args": [
+              "REPLACE_WITH_YOUR_PATH/interactive-feedback-mcp-v2/src/main.js",
+              "--mode", 
+              "mcp-server"
+            ],
+            "env": {
+              "NODE_ENV": "production",
+              "MCP_DEBUG": "false"
+            }
+          }
+        }
+      }
+    }
+  },
+  "installation_notes": {
+    "step1": "Replace REPLACE_WITH_YOUR_PATH with actual project path",
+    "step2": "Install Node.js dependencies: npm install or yarn install", 
+    "step3": "Test server: node src/main.js --mode mcp-server",
+    "step4": "Configure in your editor according to the file_location instructions"
+  },
+  "available_tools": [
+    {
+      "name": "interactive_feedback",
+      "description": "Request secure interactive feedback for a project",
+      "parameters": {
+        "project_directory": "Path to project directory",
+        "summary": "Summary of request or context"
+      }
+    }
+  ],
+  "security_features": [
+    "Input validation",
+    "Audit logging", 
+    "File access control",
+    "Sandbox execution",
+    "Rate limiting"
+  ]
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Feedback MCP Terminal</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <!-- Markdown support libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="terminal-container">
+      <!-- Terminal Header -->
+      <div class="terminal-header">
+        <div class="terminal-controls">
+          <span class="control-btn close"></span>
+          <span class="control-btn minimize"></span>
+          <span class="control-btn maximize"></span>
+        </div>
+        <div class="terminal-title">
+          <span data-lang-key="title">Interactive Feedback MCP Terminal</span>
+        </div>
+        <div class="terminal-actions">
+          <button id="lang-toggle" class="terminal-btn" title="Switch Language / Chuyển đổi ngôn ngữ">
+            <span id="lang-display">EN</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Terminal Body -->
+      <div class="terminal-body">
+        <!-- Project Directory Display -->
+        <div class="terminal-line">
+          <span class="prompt">~/project:</span>
+          <span id="project-directory" class="project-path">Loading...</span>
+        </div>
+
+        <!-- Command Input Section -->
+        <div class="terminal-section">
+          <div class="section-header">
+            <span class="section-title">Command Execution</span>
+            <div class="section-controls">
+              <button id="toggle-command-btn" class="terminal-btn small" data-lang-key="toggleCommand">
+                <span data-lang-key="showCommand">Show</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="command-section" class="command-panel hidden">
+            <div class="command-line">
+              <span class="prompt">$</span>
+              <input type="text" id="command-input" data-lang-key="commandPlaceholder" placeholder="Enter command to run..." class="terminal-input" />
+              <button id="run-btn" class="terminal-btn" data-lang-key="runButton">Run</button>
+            </div>
+
+            <div class="command-options">
+              <label class="terminal-checkbox">
+                <input type="checkbox" id="auto-execute-checkbox" />
+                <span data-lang-key="autoExecute">Auto-execute on load</span>
+              </label>
+              <button id="save-config-btn" class="terminal-btn small" data-lang-key="saveConfig">Save Config</button>
+            </div>
+
+            <!-- Console Output -->
+            <div class="console-window">
+              <div class="console-header">
+                <span data-lang-key="consoleOutput">Console Output</span>
+                <button id="clear-console-btn" class="terminal-btn small danger" data-lang-key="clearConsole">Clear</button>
+              </div>
+              <div id="console-output" class="console-content"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="terminal-section">
+          <div class="section-header">
+            <span class="section-title" data-lang-key="feedbackPrompt">Feedback Prompt</span>
+          </div>
+
+          <div class="feedback-panel">
+            <div class="prompt-window">
+              <div id="prompt-text" class="prompt-content" data-lang-key="loadingPrompt">Loading prompt...</div>
+            </div>
+
+            <div class="feedback-input-area">
+              <div class="terminal-line">
+                <span class="prompt">feedback></span>
+                <span class="cursor-blink">_</span>
+              </div>
+              <textarea id="feedback-textarea" data-lang-key="feedbackPlaceholder" placeholder="Enter your feedback here..." class="terminal-textarea"></textarea>
+
+              <!-- Speech to Text Controls -->
+              <div class="speech-controls">
+                <button id="mic-btn" class="terminal-btn mic-btn" title="Record voice feedback">
+                  <span class="mic-icon">🎤</span>
+                  <span id="mic-status" data-lang-key="micReady">Ready</span>
+                </button>
+                <div id="recording-indicator" class="recording-indicator hidden">
+                  <span class="recording-dot"></span>
+                  <span data-lang-key="recording">Recording...</span>
+                  <span id="recording-timer">00:00</span>
+                </div>
+                <div id="transcription-status" class="transcription-status hidden">
+                  <span data-lang-key="transcribing">Transcribing...</span>
+                </div>
+              </div>
+
+              <!-- File Import Controls -->
+              <div class="file-import-controls">
+                <div class="file-import-trigger">
+                  <span class="file-import-hint" data-lang-key="fileImportHint">Type @ to browse files</span>
+                </div>
+                <div id="file-picker-dropdown" class="file-picker-dropdown hidden">
+                  <div class="file-picker-header">
+                    <span id="current-path" class="current-path">~/</span>
+                    <button id="close-file-picker" class="close-btn">×</button>
+                  </div>
+                  <div class="file-picker-content">
+                    <div id="file-list" class="file-list">
+                      <!-- File/folder items will be populated here -->
+                    </div>
+                  </div>
+                  <div class="file-picker-footer">
+                    <button id="go-back-btn" class="terminal-btn small" data-lang-key="goBack">← Back</button>
+                    <span id="file-picker-status" class="file-picker-status" data-lang-key="selectFile">Select a file to import</span>
+                    <span id="multi-select-status" class="multi-select-status hidden">0 files selected • Ctrl+Enter to insert</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="feedback-options">
+                <label class="checkbox-container">
+                  <input type="checkbox" id="auto-mcp-request" checked />
+                  <span class="checkmark"></span>
+                  <span id="auto-mcp-label" data-lang-key="autoMcpRequest">Automatically add MCP feedback request</span>
+                </label>
+              </div>
+
+              <div class="feedback-actions">
+                <button id="submit-feedback-btn" class="terminal-btn success" data-lang-key="submitFeedback">Submit Feedback</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Footer -->
+        <div class="terminal-footer">
+          <span class="footer-info">
+            Created with ❤️ by <a href="https://github.com/zivhdinfo/" target="_blank">Zivhd</a> | Based on <a href="https://github.com/noopstudios/interactive-feedback-mcp" target="_blank">Interactive Feedback MCP</a>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

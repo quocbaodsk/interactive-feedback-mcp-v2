@@ -1,0 +1,23 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 3636,
+    "autoStart": false
+  },
+  "security": {
+    "enableSandbox": true,
+    "maxProcesses": 3,
+    "timeoutMs": 300000,
+    "allowNetworkAccess": false
+  },
+  "logging": {
+    "level": "info",
+    "console": true,
+    "file": false
+  },
+  "features": {
+    "interactiveFeedback": true,
+    "commandRunner": true,
+    "fileBrowser": true
+  }
+}
