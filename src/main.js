@@ -84,7 +84,8 @@ Examples:
     const configManager = new ConfigManager(PROJECT_ROOT)
 
     // Load configuration
-    const projectDirectory = args.project_directory || process.cwd()
+    // Use PROJECT_ROOT as the default project directory to ensure config files are found
+    const projectDirectory = args.project_directory || PROJECT_ROOT
     const config = await configManager.loadProjectConfig(projectDirectory)
 
     // Override config with command line args

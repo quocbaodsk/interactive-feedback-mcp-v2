@@ -2,22 +2,101 @@
   "server": {
     "host": "127.0.0.1",
     "port": 3636,
-    "autoStart": false
+    "autoStart": false,
+    "maxConnections": 10,
+    "requestTimeoutMs": 30000
   },
   "security": {
     "enableSandbox": true,
     "maxProcesses": 3,
     "timeoutMs": 300000,
-    "allowNetworkAccess": false
+    "allowNetworkAccess": false,
+    "enableRateLimit": true,
+    "rateLimitWindowMs": 900000,
+    "rateLimitMaxRequests": 100,
+    "enableCSRFProtection": true,
+    "enableHelmet": true
+  },
+  "files": {
+    "allowedExtensions": [
+      ".js",
+      ".mjs",
+      ".cjs",
+      ".ts",
+      ".tsx",
+      ".jsx",
+      ".json",
+      ".md",
+      ".txt",
+      ".yml",
+      ".yaml",
+      ".html",
+      ".css",
+      ".scss",
+      ".less",
+      ".vue",
+      ".py",
+      ".sh",
+      ".bat",
+      ".cmd",
+      ".ps1",
+      ".gitignore",
+      ".env.example",
+      ".toml",
+      ".ini",
+      ".conf",
+      ".xml",
+      ".svg"
+    ],
+    "blockedFiles": [
+      ".env",
+      ".env.local",
+      ".env.production",
+      ".env.development",
+      "id_rsa",
+      "id_dsa",
+      "id_ecdsa",
+      "id_ed25519",
+      "*.pem",
+      "*.key",
+      "*.crt",
+      "*.p12",
+      "*.pfx",
+      "*.keystore",
+      "*.jks",
+      "password*",
+      "secret*",
+      "credential*"
+    ],
+    "maxFileSize": 1048576,
+    "maxFilesPerRequest": 50
+  },
+  "commands": {
+    "enableExecution": true,
+    "maxConcurrentCommands": 3,
+    "defaultTimeoutMs": 300000,
+    "maxOutputSize": 1048576
+  },
+  "storage": {
+    "tempFileExpiryHours": 1,
+    "maxLogFileSize": 10485760,
+    "maxLogFiles": 5,
+    "configBackupCount": 3
   },
   "logging": {
     "level": "info",
     "console": true,
-    "file": false
+    "file": true
   },
   "features": {
     "interactiveFeedback": true,
     "commandRunner": true,
     "fileBrowser": true
+  },
+  "ui": {
+    "theme": "dark",
+    "autoFocus": true,
+    "commandHistorySize": 50,
+    "enableNotifications": true
   }
 }

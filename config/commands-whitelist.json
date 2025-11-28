@@ -1,7 +1,15 @@
 {
-  "allowedCommands": ["ls", "pwd", "cat", "echo", "node", "npm", "yarn", "git"],
+  "allowedCommands": {
+    "development": ["node", "npm", "yarn", "pnpm", "bun", "deno", "npx", "tsx", "ts-node"],
+    "build": ["npm run", "yarn run", "pnpm run", "npm build", "yarn build", "npm test", "yarn test", "npm start", "yarn start"],
+    "git": ["git status", "git diff", "git log", "git branch", "git add", "git commit", "git push", "git pull", "git checkout", "git stash"]
+  },
+  "commandPatterns": {
+    "packageManager": "^(npm|yarn|pnpm|bun)\\s+(install|add|remove|update|run|test|build|start)",
+    "nodeExecution": "^node\\s+[a-zA-Z0-9\\-_\\./]+\\.m?js",
+    "gitOperations": "^git\\s+(status|diff|log|branch|add|commit|push|pull|checkout|stash)"
+  },
+  "forbiddenPatterns": ["rm\\s+-rf\\s+/", "sudo", "chmod\\s+777", "eval\\(", "exec\\(", ">\\s*/dev/", "curl.*\\|.*sh", "wget.*\\|.*sh", "dd\\s+if=", "mkfs", "fdisk"],
   "maxCommandLength": 500,
-  "allowShellCommands": true,
-  "restrictedPaths": [],
-  "allowedFileExtensions": [".js", ".json", ".md", ".txt", ".yml", ".yaml"]
+  "maxExecutionTimeSeconds": 300
 }
