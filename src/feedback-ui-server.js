@@ -57,7 +57,8 @@ class FeedbackUIServer {
     this.serverClosing = false
     this.server = null
     this.wss = null
-    this.port = 3800 + Math.floor(Math.random() * 100) // Random port
+    // this.port = 3800 + Math.floor(Math.random() * 100) // Random port
+    this.port = 8636
     this.commandProcess = null
     this.commandLogs = ''
 
