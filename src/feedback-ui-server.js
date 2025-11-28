@@ -53,6 +53,8 @@ class FeedbackUIServer {
     this.summary = summary
     this.outputFile = outputFile
     this.feedbackResult = null
+    this.feedbackWriteFailed = false
+    this.serverClosing = false
     this.server = null
     this.wss = null
     this.port = 3800 + Math.floor(Math.random() * 100) // Random port
@@ -345,20 +347,56 @@ class FeedbackUIServer {
 
         // Write to output file if specified
         if (this.outputFile) {
-          try {
-            console.log('📄 Writing to output file:', this.outputFile)
-            await fs.writeJson(this.outputFile, this.feedbackResult, { spaces: 2 })
+          let writeAttempts = 0
+          const maxWriteAttempts = 3
+          let lastError = null
 
-            // Verify file was written
-            const exists = await fs.pathExists(this.outputFile)
-            if (exists) {
-              console.log('✅ Output file written and verified')
-            } else {
-              console.error('⚠️  Output file not found after write')
+          while (writeAttempts < maxWriteAttempts) {
+            try {
+              console.log(`📄 Writing to output file (attempt ${writeAttempts + 1}/${maxWriteAttempts}):`, this.outputFile)
+
+              // Write the file with explicit encoding
+              const jsonContent = JSON.stringify(this.feedbackResult, null, 2)
+              await fs.writeFile(this.outputFile, jsonContent, { encoding: 'utf8', flag: 'w' })
+
+              // Wait a bit to ensure OS flushes to disk
+              await new Promise(resolve => setTimeout(resolve, 100))
+
+              // CRITICAL: Verify file was written correctly by reading it back
+              const exists = await fs.pathExists(this.outputFile)
+              if (!exists) {
+                throw new Error('Output file not found after write')
+              }
+
+              // Read the raw file content
+              const fileContent = await fs.readFile(this.outputFile, 'utf8')
+              if (!fileContent || fileContent.trim().length === 0) {
+                throw new Error('Output file is empty')
+              }
+
+              // Verify the content is valid JSON by parsing it
+              const writtenContent = JSON.parse(fileContent)
+              if (!writtenContent || !writtenContent.interactive_feedback) {
+                throw new Error('Output file content is invalid or missing feedback')
+              }
+
+              console.log('✅ Output file written and verified with valid content')
+              console.log(`   File size: ${fileContent.length} bytes`)
+              break // Success!
+            } catch (writeError) {
+              writeAttempts++
+              lastError = writeError
+              console.error(`❌ Error writing output file (attempt ${writeAttempts}/${maxWriteAttempts}):`, writeError.message)
+
+              if (writeAttempts >= maxWriteAttempts) {
+                // Mark this feedback as failed so process exits with error
+                this.feedbackWriteFailed = true
+                throw lastError
+              }
+
+              // Wait before retry
+              await new Promise(resolve => setTimeout(resolve, 200))
             }
-          } catch (writeError) {
-            console.error('❌ Error writing output file:', writeError)
-            // Continue anyway - response is more important
           }
         }
 
@@ -387,6 +425,7 @@ class FeedbackUIServer {
 
         setTimeout(() => {
           console.log('🛑 Auto-closing feedback server...')
+          this.serverClosing = true
 
           // Close WebSocket connections first
           if (this.wss) {
@@ -406,16 +445,14 @@ class FeedbackUIServer {
             console.log('🌐 Closing HTTP server...')
             this.server.close(() => {
               console.log('✅ Server closed gracefully')
-              process.exit(0)
+              // Don't exit yet - let run() method handle the exit
             })
 
-            // Force exit after 1 second if server doesn't close
+            // Force exit after 2 seconds if server doesn't close
             setTimeout(() => {
-              console.log('⚠️  Force exit')
+              console.log('⚠️  Force exit after timeout')
               process.exit(0)
-            }, 1000)
-          } else {
-            process.exit(0)
+            }, 2000)
           }
         }, closeDelay)
       } catch (error) {
@@ -543,11 +580,16 @@ class FeedbackUIServer {
     await this.start()
     this.openBrowser()
 
-    // Return Promise that resolves when feedbackResult is available
-    return new Promise(resolve => {
+    // Return Promise that resolves when feedbackResult is available AND server is closing
+    return new Promise((resolve, reject) => {
       const checkResult = () => {
-        if (this.feedbackResult) {
-          resolve(this.feedbackResult)
+        if (this.feedbackWriteFailed) {
+          reject(new Error('Failed to write feedback file'))
+        } else if (this.feedbackResult && this.serverClosing) {
+          // Wait a bit longer to ensure server has fully closed and file is flushed
+          setTimeout(() => {
+            resolve(this.feedbackResult)
+          }, 500)
         } else {
           setTimeout(checkResult, 100)
         }

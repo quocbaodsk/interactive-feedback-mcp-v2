@@ -589,24 +589,56 @@ export class MCPServer extends EventEmitter {
       // Read result from temp file with retry logic
       let result
       let attempts = 0
-      const maxAttempts = 5
+      const maxAttempts = 10
 
       while (attempts < maxAttempts) {
         try {
-          await new Promise(resolve => setTimeout(resolve, 200)) // Small delay
+          // Wait a bit before first attempt to ensure file is flushed
+          await new Promise(resolve => setTimeout(resolve, 500))
+
+          // Check if file exists first
+          const exists = await fs.pathExists(outputFile)
+          if (!exists) {
+            throw new Error('Output file does not exist yet')
+          }
+
+          // Try to read the file
           result = await fs.readJson(outputFile)
+
+          // Verify the content is valid
+          if (!result || !result.interactive_feedback) {
+            throw new Error('Output file content is invalid or incomplete')
+          }
+
+          this.logger.info('Successfully read feedback file', {
+            attempt: attempts + 1,
+            sessionId: this.sessionId,
+          })
           break
         } catch (error) {
           attempts++
           if (attempts >= maxAttempts) {
-            throw new Error(`Failed to read feedback result after ${maxAttempts} attempts: ${error.message}`)
+            // Log the file content for debugging
+            try {
+              const fileContent = await fs.readFile(outputFile, 'utf8')
+              this.logger.error('Final file content on read failure', {
+                content: fileContent,
+                sessionId: this.sessionId,
+              })
+            } catch (readError) {
+              this.logger.error('Could not read file content', {
+                error: readError.message,
+                sessionId: this.sessionId,
+              })
+            }
+            throw new Error(`Failed to read feedback result after ${maxAttempts} attempts: ${outputFile}: ${error.message}`)
           }
           this.logger.debug('Retry reading feedback file', {
             attempt: attempts,
             error: error.message,
             sessionId: this.sessionId,
           })
-          await new Promise(resolve => setTimeout(resolve, 500))
+          await new Promise(resolve => setTimeout(resolve, 800))
         }
       }
 
