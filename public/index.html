@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <!-- Markdown support libraries -->
     <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
@@ -16,86 +16,126 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   </head>
   <body>
-    <div class="terminal-container">
-      <!-- Terminal Header -->
-      <div class="terminal-header">
-        <div class="terminal-controls">
-          <span class="control-btn close" title="Close"></span>
-          <span class="control-btn minimize" title="Minimize"></span>
-          <span class="control-btn maximize" title="Maximize"></span>
-        </div>
-        <div class="terminal-title">
-          <span data-lang-key="title">Interactive Feedback MCP Terminal</span>
-        </div>
-        <div class="terminal-actions">
-          <button id="lang-toggle" class="terminal-btn small" title="Switch Language / Chuyển đổi ngôn ngữ">
-            <span id="lang-display">EN</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Terminal Body -->
-      <div class="terminal-body">
-        <!-- Project Directory Display -->
-        <div class="terminal-line">
-          <span class="prompt">~/project:</span>
-          <span id="project-directory" class="project-path">Loading...</span>
-        </div>
-
-        <!-- Command Input Section -->
-        <div class="terminal-section">
-          <div class="section-header">
-            <span class="section-title">Command Execution</span>
-            <div class="section-controls">
-              <button id="toggle-command-btn" class="terminal-btn small" data-lang-key="toggleCommand">
-                <span data-lang-key="showCommand">Show</span>
-              </button>
+    <div class="app-container">
+      <!-- App Header -->
+      <header class="app-header">
+        <div class="header-content">
+          <div class="logo-section">
+            <div class="logo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H16"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path d="M12 3V16M12 3L8 7M12 3L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </div>
+            <h1 class="app-title">Interactive Feedback MCP</h1>
+          </div>
+          <div class="header-actions">
+            <button id="lang-toggle" class="icon-btn" title="Switch Language / Chuyển đổi ngôn ngữ">
+              <span class="lang-indicator" id="lang-display">EN</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Project Path Bar -->
+        <div class="path-bar">
+          <div class="path-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 7V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path d="M3 7L12 14L21 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="path-text">
+            <span class="path-label">Project:</span>
+            <span id="project-directory" class="project-path">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Command Section -->
+        <section class="card command-section">
+          <div class="card-header">
+            <h2 class="card-title">Command Execution</h2>
+            <button id="toggle-command-btn" class="toggle-btn">
+              <span class="toggle-icon">▼</span>
+              <span data-lang-key="showCommand">Show</span>
+            </button>
           </div>
 
-          <div id="command-section" class="command-panel hidden">
-            <div class="command-line">
-              <span class="prompt">$</span>
-              <input type="text" id="command-input" data-lang-key="commandPlaceholder" placeholder="Enter command to run..." class="terminal-input" />
-              <button id="run-btn" class="terminal-btn" data-lang-key="runButton">Run</button>
+          <div id="command-section" class="card-content hidden">
+            <div class="command-input-group">
+              <div class="input-wrapper">
+                <span class="input-prefix">$</span>
+                <input type="text" id="command-input" data-lang-key="commandPlaceholder" placeholder="Enter command to run..." class="text-input" />
+              </div>
+              <button id="run-btn" class="btn btn-primary" data-lang-key="runButton">Run</button>
             </div>
 
             <div class="command-options">
-              <label class="terminal-checkbox">
-                <input type="checkbox" id="auto-execute-checkbox" />
+              <label class="checkbox-label">
+                <input type="checkbox" id="auto-execute-checkbox" class="checkbox-input" />
+                <span class="checkbox-custom"></span>
                 <span data-lang-key="autoExecute">Auto-execute on load</span>
               </label>
-              <button id="save-config-btn" class="terminal-btn small" data-lang-key="saveConfig">Save Config</button>
+              <button id="save-config-btn" class="btn btn-secondary" data-lang-key="saveConfig">Save Config</button>
             </div>
 
-            <!-- Console Output -->
-            <div class="console-window">
+            <div class="console-container">
               <div class="console-header">
-                <span data-lang-key="consoleOutput">Console Output</span>
-                <button id="clear-console-btn" class="terminal-btn small danger" data-lang-key="clearConsole">Clear</button>
+                <h3 class="console-title" data-lang-key="consoleOutput">Console Output</h3>
+                <button id="clear-console-btn" class="btn btn-icon" title="Clear console">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M19 7L18.3677 7.63234C16.8383 9.16172 15.4119 10.7896 14.1012 12.5076L14.1012 12.5076C12.7905 14.2256 11.3642 15.8535 9.83478 17.3828L9.20244 18.0152M5 12H19"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
-              <div id="console-output" class="console-content"></div>
+              <div id="console-output" class="console-output"></div>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Feedback Section -->
-        <div class="terminal-section">
-          <div class="section-header">
-            <span class="section-title" data-lang-key="feedbackPrompt">Feedback Prompt</span>
+        <section class="card feedback-section">
+          <div class="card-header">
+            <h2 class="card-title" data-lang-key="feedbackPrompt">Feedback Prompt</h2>
           </div>
 
-          <div class="feedback-panel">
-            <div class="prompt-window">
-              <div id="prompt-text" class="prompt-content" data-lang-key="loadingPrompt">Loading prompt...</div>
+          <div class="card-content">
+            <div class="prompt-container">
+              <div id="prompt-text" class="prompt-text" data-lang-key="loadingPrompt">Loading prompt...</div>
             </div>
 
-            <div class="feedback-input-area">
-              <div class="terminal-line">
-                <span class="prompt">feedback></span>
-                <span class="cursor-blink">_</span>
+            <div class="feedback-input-container">
+              <div class="input-header">
+                <div class="input-label">
+                  <span class="label-icon">✏️</span>
+                  <span>Your Feedback</span>
+                </div>
+                <div class="cursor-indicator">
+                  <span class="cursor-blink">_</span>
+                </div>
               </div>
-              <textarea id="feedback-textarea" data-lang-key="feedbackPlaceholder" placeholder="Enter your feedback here..." class="terminal-textarea"></textarea>
+
+              <textarea id="feedback-textarea" data-lang-key="feedbackPlaceholder" placeholder="Enter your feedback here..." class="text-area"></textarea>
 
               <!-- Speech to Text Controls -->
               <div class="speech-controls" style="display: none">
@@ -129,7 +169,7 @@
                     </div>
                   </div>
                   <div class="file-picker-footer">
-                    <button id="go-back-btn" class="terminal-btn small" data-lang-key="goBack">← Back</button>
+                    <button id="go-back-btn" class="btn btn-secondary" data-lang-key="goBack">← Back</button>
                     <span id="file-picker-status" class="file-picker-status" data-lang-key="selectFile">Select a file to import</span>
                     <span id="multi-select-status" class="multi-select-status hidden">0 files selected • Ctrl+Enter to insert</span>
                   </div>
@@ -137,28 +177,30 @@
               </div>
 
               <div class="feedback-options">
-                <label class="checkbox-container">
-                  <input type="checkbox" id="auto-mcp-request" checked />
-                  <span class="checkmark"></span>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="auto-mcp-request" checked class="checkbox-input" />
+                  <span class="checkbox-custom"></span>
                   <span id="auto-mcp-label" data-lang-key="autoMcpRequest">Automatically add MCP feedback request</span>
                 </label>
               </div>
 
               <div class="feedback-actions">
-                <button id="submit-feedback-btn" class="terminal-btn success" data-lang-key="submitFeedback">Submit Feedback</button>
+                <button id="submit-feedback-btn" class="btn btn-primary btn-large" data-lang-key="submitFeedback">Submit Feedback</button>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+      </main>
 
-        <!-- Terminal Footer -->
-        <div class="terminal-footer">
-          <span class="footer-info">
+      <!-- App Footer -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <p class="footer-text">
             Created with ❤️ by <a href="https://github.com/quocbaodsk/" target="_blank" rel="noopener noreferrer">quocbaodsk</a> | Based on
             <a href="https://github.com/noopstudios/interactive-feedback-mcp" target="_blank" rel="noopener noreferrer">Interactive Feedback MCP</a>
-          </span>
+          </p>
         </div>
-      </div>
+      </footer>
     </div>
 
     <script src="script.js"></script>
