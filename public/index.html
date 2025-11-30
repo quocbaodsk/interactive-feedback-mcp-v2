@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <!-- Markdown support libraries -->
     <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
@@ -20,15 +20,15 @@
       <!-- Terminal Header -->
       <div class="terminal-header">
         <div class="terminal-controls">
-          <span class="control-btn close"></span>
-          <span class="control-btn minimize"></span>
-          <span class="control-btn maximize"></span>
+          <span class="control-btn close" title="Close"></span>
+          <span class="control-btn minimize" title="Minimize"></span>
+          <span class="control-btn maximize" title="Maximize"></span>
         </div>
         <div class="terminal-title">
           <span data-lang-key="title">Interactive Feedback MCP Terminal</span>
         </div>
         <div class="terminal-actions">
-          <button id="lang-toggle" class="terminal-btn" title="Switch Language / Chuyển đổi ngôn ngữ">
+          <button id="lang-toggle" class="terminal-btn small" title="Switch Language / Chuyển đổi ngôn ngữ">
             <span id="lang-display">EN</span>
           </button>
         </div>
@@ -99,7 +99,7 @@
 
               <!-- Speech to Text Controls -->
               <div class="speech-controls" style="display: none">
-                <button id="mic-btn" class="terminal-btn mic-btn" title="Record voice feedback">
+                <button id="mic-btn" class="mic-btn" title="Record voice feedback">
                   <span class="mic-icon">🎤</span>
                   <span id="mic-status" data-lang-key="micReady">Ready</span>
                 </button>
@@ -121,7 +121,7 @@
                 <div id="file-picker-dropdown" class="file-picker-dropdown hidden">
                   <div class="file-picker-header">
                     <span id="current-path" class="current-path">~/</span>
-                    <button id="close-file-picker" class="close-btn">×</button>
+                    <button id="close-file-picker" class="close-btn" title="Close file picker">×</button>
                   </div>
                   <div class="file-picker-content">
                     <div id="file-list" class="file-list">
@@ -154,8 +154,8 @@
         <!-- Terminal Footer -->
         <div class="terminal-footer">
           <span class="footer-info">
-            Created with ❤️ by <a href="https://github.com/quocbaodsk/" target="_blank">quocbaodsk</a> | Based on
-            <a href="https://github.com/noopstudios/interactive-feedback-mcp" target="_blank">Interactive Feedback MCP</a>
+            Created with ❤️ by <a href="https://github.com/quocbaodsk/" target="_blank" rel="noopener noreferrer">quocbaodsk</a> | Based on
+            <a href="https://github.com/noopstudios/interactive-feedback-mcp" target="_blank" rel="noopener noreferrer">Interactive Feedback MCP</a>
           </span>
         </div>
       </div>

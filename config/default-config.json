@@ -84,9 +84,10 @@
     "configBackupCount": 3
   },
   "logging": {
-    "level": "info",
-    "console": true,
-    "file": true
+    "level": "error",
+    "console": false,
+    "file": true,
+    "enableAudit": false
   },
   "features": {
     "interactiveFeedback": true,

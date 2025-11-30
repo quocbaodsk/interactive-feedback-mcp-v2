@@ -29,6 +29,9 @@ async function startLightweightMCPServer() {
       logging: {
         level: process.env.MCP_LOG_LEVEL || 'error',
         console: false, // Disable console logging for faster startup
+        file: true, // Keep file logging enabled but only for errors
+        enableFile: true, // Enable file logging
+        enableAudit: false, // Disable audit logging
       },
     })
 
