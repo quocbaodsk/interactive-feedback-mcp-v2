@@ -159,16 +159,16 @@ export class MCPServer extends EventEmitter {
 
       // Only send error response if we have a valid id
       if (request.id && (typeof request.id === 'string' || typeof request.id === 'number')) {
-        const errorResponse = {
-          jsonrpc: '2.0',
+      const errorResponse = {
+        jsonrpc: '2.0',
           id: request.id,
-          error: {
-            code: -32603,
-            message: 'Internal error',
-            data: 'Request processing failed',
-          },
-        }
-        this.sendResponse(errorResponse)
+        error: {
+          code: -32603,
+          message: 'Internal error',
+          data: 'Request processing failed',
+        },
+      }
+      this.sendResponse(errorResponse)
       }
     }
   }
