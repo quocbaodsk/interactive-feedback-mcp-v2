@@ -105,18 +105,8 @@ export class MCPServer extends EventEmitter {
         error: error.message,
         sessionId: this.sessionId,
       })
-
-      // Send generic error response
-      const errorResponse = {
-        jsonrpc: '2.0',
-        id: null,
-        error: {
-          code: -32700,
-          message: 'Parse error',
-          data: 'Invalid request format',
-        },
-      }
-      this.sendResponse(errorResponse)
+      // Don't send error response for parse errors - MCP SDK doesn't handle id: null well
+      // Per JSON-RPC 2.0 spec, we could send id: null, but MCP SDK expects string/number
     }
   }
 
@@ -135,17 +125,8 @@ export class MCPServer extends EventEmitter {
         requestLine: requestLine.substring(0, 100),
         sessionId: this.sessionId,
       })
-
-      const errorResponse = {
-        jsonrpc: '2.0',
-        id: null,
-        error: {
-          code: -32700,
-          message: 'Parse error',
-          data: 'Invalid JSON',
-        },
-      }
-      this.sendResponse(errorResponse)
+      // Don't send error response for JSON parse errors
+      // MCP SDK doesn't handle id: null well
       return
     }
 
@@ -176,16 +157,19 @@ export class MCPServer extends EventEmitter {
         sessionId: this.sessionId,
       })
 
-      const errorResponse = {
-        jsonrpc: '2.0',
-        id: request.id || null,
-        error: {
-          code: -32603,
-          message: 'Internal error',
-          data: 'Request processing failed',
-        },
+      // Only send error response if we have a valid id
+      if (request.id && (typeof request.id === 'string' || typeof request.id === 'number')) {
+        const errorResponse = {
+          jsonrpc: '2.0',
+          id: request.id,
+          error: {
+            code: -32603,
+            message: 'Internal error',
+            data: 'Request processing failed',
+          },
+        }
+        this.sendResponse(errorResponse)
       }
-      this.sendResponse(errorResponse)
     }
   }
 
@@ -197,9 +181,14 @@ export class MCPServer extends EventEmitter {
   async handleRequest(request) {
     // Validate JSON-RPC 2.0 format
     if (request.jsonrpc !== '2.0') {
+      // If no valid id, don't send response - MCP SDK doesn't handle id: null
+      if (!request.id || (typeof request.id !== 'string' && typeof request.id !== 'number')) {
+        this.logger.error('Invalid request without valid id', { sessionId: this.sessionId })
+        return null
+      }
       return {
         jsonrpc: '2.0',
-        id: request.id || null,
+        id: request.id,
         error: {
           code: -32600,
           message: 'Invalid Request',
@@ -229,9 +218,14 @@ export class MCPServer extends EventEmitter {
           sessionId: this.sessionId,
         })
 
+        // If no valid id, don't send response
+        if (!request.id || (typeof request.id !== 'string' && typeof request.id !== 'number')) {
+          return null
+        }
+
         return {
           jsonrpc: '2.0',
-          id: request.id || null,
+          id: request.id,
           error: {
             code: -32601,
             message: 'Method not found',

@@ -16,6 +16,9 @@ const PROJECT_ROOT = join(__dirname, '..')
 // Set up global project root for other modules
 process.env.PROJECT_ROOT = PROJECT_ROOT
 
+// Set MCP_LOG_LEVEL to prevent any console output that could interfere with MCP protocol
+process.env.MCP_LOG_LEVEL = process.env.MCP_LOG_LEVEL || 'error'
+
 /**
  * Fast MCP Server startup
  */
@@ -27,11 +30,10 @@ async function startLightweightMCPServer() {
     // Create lightweight server instance with interactive feedback support
     const mcpServer = new MCPServer(PROJECT_ROOT, {
       logging: {
-        level: process.env.MCP_LOG_LEVEL || 'error',
-        console: false, // Disable console logging for faster startup
-        file: true, // Keep file logging enabled but only for errors
-        enableFile: true, // Enable file logging
-        enableAudit: false, // Disable audit logging
+        logLevel: 'error', // Only log errors
+        enableConsole: false, // CRITICAL: Disable console logging to prevent MCP protocol interference
+        enableFile: true, // Keep file logging enabled for errors
+        enableAudit: false, // Disable audit logging for performance
       },
     })
 

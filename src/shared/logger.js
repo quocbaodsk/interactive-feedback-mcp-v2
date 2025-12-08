@@ -45,7 +45,10 @@ export class Logger {
       this.auditLogPath = path.join(this.logsDir, 'audit.log')
       this.errorLogPath = path.join(this.logsDir, 'error.log')
     } catch (error) {
-      console.error('Failed to setup log directories:', error.message)
+      // Only log to stderr if console is enabled and not in MCP mode
+      if (this.config.enableConsole && !process.env.MCP_LOG_LEVEL) {
+        process.stderr.write(`Failed to setup log directories: ${error.message}\n`)
+      }
     }
   }
 
@@ -202,7 +205,10 @@ export class Logger {
 
       await fs.appendFile(this.appLogPath, logLine)
     } catch (error) {
-      console.error('Failed to write to log file:', error.message)
+      // Silent fail in MCP mode to prevent protocol interference
+      if (!process.env.MCP_LOG_LEVEL) {
+        process.stderr.write(`Failed to write to log file: ${error.message}\n`)
+      }
     }
   }
 
@@ -219,7 +225,10 @@ export class Logger {
       await this.rotateLogIfNeeded(this.errorLogPath)
       await fs.appendFile(this.errorLogPath, logLine)
     } catch (error) {
-      console.error('Failed to write to error log file:', error.message)
+      // Silent fail in MCP mode
+      if (!process.env.MCP_LOG_LEVEL) {
+        process.stderr.write(`Failed to write to error log file: ${error.message}\n`)
+      }
     }
   }
 
@@ -236,7 +245,10 @@ export class Logger {
       await this.rotateLogIfNeeded(this.auditLogPath)
       await fs.appendFile(this.auditLogPath, logLine)
     } catch (error) {
-      console.error('Failed to write to audit log file:', error.message)
+      // Silent fail in MCP mode
+      if (!process.env.MCP_LOG_LEVEL) {
+        process.stderr.write(`Failed to write to audit log file: ${error.message}\n`)
+      }
     }
   }
 
@@ -276,7 +288,10 @@ export class Logger {
       const rotatedLog = path.join(dir, `${baseName}.1${extension}`)
       await fs.move(logFilePath, rotatedLog)
     } catch (error) {
-      console.error('Failed to rotate log file:', error.message)
+      // Silent fail in MCP mode
+      if (!process.env.MCP_LOG_LEVEL) {
+        process.stderr.write(`Failed to rotate log file: ${error.message}\n`)
+      }
     }
   }
 
