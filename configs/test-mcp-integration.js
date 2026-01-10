@@ -64,13 +64,13 @@ async function testMCPIntegration() {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Send tool call - this should trigger the web UI
-    console.log('3. Calling interactive_feedback tool (this will open web UI)...');
+    console.log('3. Calling ask_user tool (this will open web UI)...');
     const toolCallMessage = {
         jsonrpc: '2.0',
         id: 2,
         method: 'tools/call',
         params: {
-            name: 'interactive_feedback',
+            name: 'ask_user',
             arguments: {
                 project_directory: PROJECT_ROOT,
                 summary: 'Testing MCP integration with automatic web UI launch. This prompt should appear in the web interface that opens automatically.'

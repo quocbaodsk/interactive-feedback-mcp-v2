@@ -471,7 +471,7 @@ export class APIRoutes {
 
             // Create feedback result
             const result = {
-                interactive_feedback: feedbackValidation.sanitizedFeedback,
+                ask_user: feedbackValidation.sanitizedFeedback,
                 command_logs: this.processRunner.getActiveProcesses()
                     .map(p => `[${p.executionId}] ${p.command}`)
                     .join('\n'),

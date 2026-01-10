@@ -85,7 +85,7 @@ if [ -f "$OUTPUT_FILE" ]; then
         echo ""
         
         PROMPT_IN_OUTPUT=$(cat "$OUTPUT_FILE" | jq -r '.prompt // .summary // ""')
-        FEEDBACK=$(cat "$OUTPUT_FILE" | jq -r '.interactive_feedback // ""')
+        FEEDBACK=$(cat "$OUTPUT_FILE" | jq -r '.ask_user // ""')
         
         echo -e "${YELLOW}What AI sent (PROMPT/SUMMARY):${NC}"
         echo "$TEST_SUMMARY" | head -3
@@ -128,7 +128,7 @@ if [ -f "$OUTPUT_FILE" ]; then
         echo -e "${BLUE}📤 What MCP Server Returns to AI:${NC}"
         echo "{"
         echo "  \"command_logs\": \"Interactive feedback completed\","
-        echo "  \"interactive_feedback\": \"$FEEDBACK\","
+        echo "  \"ask_user\": \"$FEEDBACK\","
         echo "  \"session_id\": \"...\","
         echo "  \"security_status\": \"All validations passed\","
         echo "  \"session_completed\": true,"

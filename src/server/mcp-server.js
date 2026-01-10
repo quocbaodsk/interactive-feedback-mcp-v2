@@ -43,8 +43,8 @@ export class MCPServer extends EventEmitter {
 
     // Available tools
     this.tools = {
-      interactive_feedback: {
-        name: 'interactive_feedback',
+      ask_user: {
+        name: 'ask_user',
         description: 'Request secure interactive feedback for a given project directory and summary',
         inputSchema: {
           type: 'object',
@@ -159,16 +159,16 @@ export class MCPServer extends EventEmitter {
 
       // Only send error response if we have a valid id
       if (request.id && (typeof request.id === 'string' || typeof request.id === 'number')) {
-      const errorResponse = {
-        jsonrpc: '2.0',
+        const errorResponse = {
+          jsonrpc: '2.0',
           id: request.id,
-        error: {
-          code: -32603,
-          message: 'Internal error',
-          data: 'Request processing failed',
-        },
-      }
-      this.sendResponse(errorResponse)
+          error: {
+            code: -32603,
+            message: 'Internal error',
+            data: 'Request processing failed',
+          },
+        }
+        this.sendResponse(errorResponse)
       }
     }
   }
@@ -457,7 +457,7 @@ export class MCPServer extends EventEmitter {
    */
   async executeTool(toolName, sanitizedArgs) {
     switch (toolName) {
-      case 'interactive_feedback':
+      case 'ask_user':
         return await this.executeInteractiveFeedback(sanitizedArgs)
       default:
         throw new Error(`Tool not implemented: ${toolName}`)
@@ -483,13 +483,13 @@ export class MCPServer extends EventEmitter {
 
       this.logger.info('Interactive feedback completed', {
         sessionId: this.sessionId,
-        feedbackLength: feedbackResult.interactive_feedback?.length || 0,
+        feedbackLength: feedbackResult.ask_user?.length || 0,
       })
 
       // Log what we're about to return to AI
       const returnData = {
         command_logs: feedbackResult.command_logs || 'Interactive feedback completed',
-        interactive_feedback: feedbackResult.interactive_feedback || 'No feedback provided',
+        ask_user: feedbackResult.ask_user || 'No feedback provided',
         session_id: this.sessionId,
         security_status: 'All validations passed',
         session_completed: true,
@@ -497,8 +497,8 @@ export class MCPServer extends EventEmitter {
       }
 
       this.logger.info('Returning feedback to AI', {
-        interactive_feedback: returnData.interactive_feedback.substring(0, 100) + '...',
-        feedbackLength: returnData.interactive_feedback.length,
+        ask_user: returnData.ask_user.substring(0, 100) + '...',
+        feedbackLength: returnData.ask_user.length,
         sessionId: this.sessionId,
       })
 
@@ -511,7 +511,7 @@ export class MCPServer extends EventEmitter {
 
       return {
         command_logs: `Error: ${error.message}`,
-        interactive_feedback: 'Failed to get interactive feedback',
+        ask_user: 'Failed to get interactive feedback',
         session_id: this.sessionId,
         security_status: 'Error occurred',
         error: error.message,
@@ -600,7 +600,7 @@ export class MCPServer extends EventEmitter {
           result = await fs.readJson(outputFile)
 
           // Verify the content is valid
-          if (!result || !result.interactive_feedback) {
+          if (!result || !result.ask_user) {
             throw new Error('Output file content is invalid or incomplete')
           }
 
@@ -638,7 +638,7 @@ export class MCPServer extends EventEmitter {
 
       this.logger.info('Feedback result loaded', {
         hasResult: !!result,
-        feedbackLength: result.interactive_feedback?.length || 0,
+        feedbackLength: result.ask_user?.length || 0,
         sessionId: this.sessionId,
       })
 

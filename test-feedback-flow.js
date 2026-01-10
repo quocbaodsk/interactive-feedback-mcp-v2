@@ -126,7 +126,7 @@ async function verifyOutputFile() {
     console.log()
 
     // Validate structure
-    const requiredFields = ['interactive_feedback', 'session_completed', 'timestamp']
+    const requiredFields = ['ask_user', 'session_completed', 'timestamp']
     const missingFields = requiredFields.filter(field => !content[field])
 
     if (missingFields.length > 0) {
@@ -137,12 +137,12 @@ async function verifyOutputFile() {
     console.log('✅ All required fields present')
 
     // Check feedback content
-    if (!content.interactive_feedback || content.interactive_feedback.trim() === '') {
+    if (!content.ask_user || content.ask_user.trim() === '') {
       console.error('❌ Feedback is empty')
       return false
     }
 
-    console.log('✅ Feedback content:', content.interactive_feedback.substring(0, 100) + (content.interactive_feedback.length > 100 ? '...' : ''))
+    console.log('✅ Feedback content:', content.ask_user.substring(0, 100) + (content.ask_user.length > 100 ? '...' : ''))
 
     // Check session completed
     if (content.session_completed !== true) {

@@ -339,7 +339,7 @@ class FeedbackUIServer {
         // Store feedback result
         this.feedbackResult = {
           command_logs: this.commandLogs || 'Interactive feedback session completed successfully',
-          interactive_feedback: feedback.trim(),
+          ask_user: feedback.trim(),
           session_completed: true,
           timestamp: new Date().toISOString(),
         }
@@ -377,7 +377,7 @@ class FeedbackUIServer {
 
               // Verify the content is valid JSON by parsing it
               const writtenContent = JSON.parse(fileContent)
-              if (!writtenContent || !writtenContent.interactive_feedback) {
+              if (!writtenContent || !writtenContent.ask_user) {
                 throw new Error('Output file content is invalid or missing feedback')
               }
 

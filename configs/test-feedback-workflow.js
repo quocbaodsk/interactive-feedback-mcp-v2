@@ -62,7 +62,7 @@ async function testFeedbackWorkflow() {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Send tool call - this should launch feedback UI and wait for user response
-    console.log('3. Calling interactive_feedback tool...');
+    console.log('3. Calling ask_user tool...');
     console.log('📝 This will open a feedback UI where you can provide feedback.');
     console.log('💡 The MCP server will WAIT for your response before returning result.');
     console.log('⏰ Please provide feedback in the UI that opens.\n');
@@ -72,7 +72,7 @@ async function testFeedbackWorkflow() {
         id: 2,
         method: 'tools/call',
         params: {
-            name: 'interactive_feedback',
+            name: 'ask_user',
             arguments: {
                 project_directory: PROJECT_ROOT,
                 summary: `Test Summary: I have implemented a new interactive feedback system for the MCP server. 
@@ -123,7 +123,7 @@ Example feedback you could provide:
                             const content = JSON.parse(response.result.content[0].text);
                             console.log('\n✅ Feedback Result Summary:');
                             console.log('- Command Logs:', content.command_logs);
-                            console.log('- User Feedback:', content.interactive_feedback);
+                            console.log('- User Feedback:', content.ask_user);
                             console.log('- Session Completed:', content.session_completed);
                             console.log('- Timestamp:', content.timestamp);
                         }

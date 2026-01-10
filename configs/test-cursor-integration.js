@@ -164,7 +164,7 @@ async function testCursorIntegration() {
     console.log('\n💡 Next Steps:');
     console.log('- Add the above config to Cursor MCP settings');
     console.log('- Restart Cursor completely');
-    console.log('- Test with: "Use interactive_feedback tool"');
+    console.log('- Test with: "Use ask_user tool"');
     
     const overallSuccess = !hasJsonError && !hasSecurityError && hasInitLog;
     

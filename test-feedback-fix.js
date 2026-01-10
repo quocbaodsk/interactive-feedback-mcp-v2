@@ -127,8 +127,8 @@ async function testFeedbackProcess() {
         console.log('    JSON parsed successfully')
 
         // Verify content
-        if (!feedbackData.interactive_feedback) {
-          throw new Error('Missing interactive_feedback field')
+        if (!feedbackData.ask_user) {
+          throw new Error('Missing ask_user field')
         }
 
         console.log('    ✅ Content is valid!')
@@ -146,7 +146,7 @@ async function testFeedbackProcess() {
     }
 
     console.log('\n✅ Test Result:')
-    console.log('  Feedback:', feedbackData.interactive_feedback)
+    console.log('  Feedback:', feedbackData.ask_user)
     console.log('  Session completed:', feedbackData.session_completed)
     console.log('  Timestamp:', feedbackData.timestamp)
 

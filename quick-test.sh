@@ -74,13 +74,13 @@ if [ -f "$OUTPUT_FILE" ]; then
         echo ""
         echo -e "${BLUE}🔍 Validating JSON structure...${NC}"
         
-        FEEDBACK=$(cat "$OUTPUT_FILE" | jq -r '.interactive_feedback')
+        FEEDBACK=$(cat "$OUTPUT_FILE" | jq -r '.ask_user')
         SESSION_COMPLETED=$(cat "$OUTPUT_FILE" | jq -r '.session_completed')
         
         if [ "$FEEDBACK" != "null" ] && [ "$FEEDBACK" != "" ]; then
-            echo -e "${GREEN}✓${NC} interactive_feedback: $FEEDBACK"
+            echo -e "${GREEN}✓${NC} ask_user: $FEEDBACK"
         else
-            echo -e "${YELLOW}✗${NC} interactive_feedback is empty"
+            echo -e "${YELLOW}✗${NC} ask_user is empty"
         fi
         
         if [ "$SESSION_COMPLETED" == "true" ]; then
@@ -100,7 +100,7 @@ if [ -f "$OUTPUT_FILE" ]; then
     echo "✅ Output file was created"
     echo "✅ JSON structure is valid"
     echo ""
-    echo -e "${BLUE}👉 Next step:${NC} Test in Cursor by asking AI to call interactive_feedback"
+    echo -e "${BLUE}👉 Next step:${NC} Test in Cursor by asking AI to call ask_user"
     echo ""
     
     # Cleanup

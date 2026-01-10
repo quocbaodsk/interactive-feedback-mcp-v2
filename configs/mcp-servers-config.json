@@ -69,7 +69,7 @@
   },
   "available_tools": [
     {
-      "name": "interactive_feedback",
+      "name": "ask_user",
       "description": "Request secure interactive feedback for a project",
       "parameters": {
         "project_directory": "Path to project directory",

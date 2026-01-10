@@ -62,13 +62,13 @@ async function testIndexUI() {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Send tool call - this should open index.html
-    console.log('3. Calling interactive_feedback tool (should open index.html)...');
+    console.log('3. Calling ask_user tool (should open index.html)...');
     const toolCallMessage = {
         jsonrpc: '2.0',
         id: 2,
         method: 'tools/call',
         params: {
-            name: 'interactive_feedback',
+            name: 'ask_user',
             arguments: {
                 project_directory: PROJECT_ROOT,
                 summary: 'Testing automatic index.html UI launch when agent calls MCP tool'
